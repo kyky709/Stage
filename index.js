@@ -62,6 +62,52 @@ app.get("/scrape", async (req, res) => {
       .send("Erreur lors de la récupération des données depuis Supabase.");
   }
 });
+// Nouvelle route pour obtenir les catégories
+app.get("/categories", async (req, res) => {
+  try {
+    // Utiliser Supabase pour récupérer les catégories et leurs sous-catégories et entrées
+    const { data, error } = await supabase
+      .from("dictionary_categories")
+      .select(
+        "*, subCategories:dictionary_sub_categories(*, entries:dictionary_entries(*))"
+      )
+      .order("order", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error(error.message);
+    res
+      .status(500)
+      .send("Erreur lors de la récupération des catégories depuis Supabase.");
+  }
+});
+
+// Nouvelle route pour obtenir toutes les applications avec les écrans de prévisualisation
+app.get("/apps", async (req, res) => {
+  try {
+    // Utiliser Supabase pour récupérer les applications avec les écrans de prévisualisation
+    const { data, error } = await supabase
+      .from("apps_with_preview_screens")
+      .select()
+      .eq("platform", "web")
+      .range(0, 999);
+
+    if (error) {
+      throw error;
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error(error.message);
+    res
+      .status(500)
+      .send("Erreur lors de la récupération des applications depuis Supabase.");
+  }
+});
 
 // Nouvelle route pour obtenir le schéma de la base de données
 app.get("/schema", async (req, res) => {
