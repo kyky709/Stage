@@ -1,43 +1,35 @@
-const express = require('express');
-const { createClient } = require('@supabase/supabase-js');
+const fetch = require('node-fetch');
+const jwtToken = 'votre_token_jwt';
 
-const app = express();
-const port = 3000; // Port sur lequel le serveur écoutera
-
-// Remplacez les valeurs suivantes par vos propres informations Supabase
-const supabaseUrl = 'https://ujasntkfphywizsdaapi.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyNTQ2MDM3NSwiZXhwIjoxOTQxMDM2Mzc1fQ.IgHG-M4znmVhQEa6uWWb3gz-_XXjsSvPPF8NBad8gvk'; // Remplacez par votre token d'accès Supabase
-
-// Initialise le client Supabase
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Route pour récupérer tous les écrans d'une application spécifique
-app.get('/screens/:appId', async (req, res) => {
-  const { appId } = req.params; // Récupère l'ID de l'application depuis l'URL
+async function fetchScreens(appId) {
+  const url = `https://ujasntkfphywizsdaapi.supabase.co/rest/v1/app_screens?id=eq.${appId}`;
+  
+  const headers = {
+    'Authorization': `Bearer ${jwtToken}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    // autres en-têtes nécessaires
+  };
 
   try {
-    // Effectue une requête à Supabase pour récupérer les écrans de l'application spécifiée
-    const { data, error } = await supabase
-      .from('app_screens')
-      .select('*')
-      .eq('appVersionId', appId);
-
-    if (error) {
-      console.error('Erreur lors de la récupération des écrans:', error.message);
-      return res.status(500).json({ error: 'Erreur lors de la récupération des écrans depuis Supabase.' });
+    const response = await fetch(url, { headers });
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des écrans');
     }
-
-    // Log des données récupérées
-    console.log('Data:', data);
-
-    res.json(data); // Renvoie les données des écrans en tant que réponse JSON
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error('Erreur lors de la récupération des écrans:', error.message);
-    res.status(500).json({ error: 'Erreur lors de la récupération des écrans depuis Supabase.' });
+    console.error('Erreur:', error.message);
+    return null;
   }
-});
+}
 
-// Lance le serveur Express
-app.listen(port, () => {
-  console.log(`Serveur démarré sur http://localhost:${port}`);
-});
+// Exemple d'utilisation
+const appId = '02ab68af-70ab-47dd-992d-602a76a6bd5b';
+fetchScreens(appId)
+  .then(data => {
+    console.log('Données récupérées:', data);
+  })
+  .catch(err => {
+    console.error('Erreur:', err);
+  });
