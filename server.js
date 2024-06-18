@@ -9,7 +9,6 @@
       'Authorization': `Bearer ${jwtToken}`,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      // autres en-têtes nécessaires
     };
 
     try {
