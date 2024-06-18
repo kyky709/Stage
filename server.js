@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const jwtToken = 'votre_token_jwt';
+const jwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyNTQ2MDM3NSwiZXhwIjoxOTQxMDM2Mzc1fQ.IgHG-M4znmVhQEa6uWWb3gz-_XXjsSvPPF8NBad8gvk';
 
 async function fetchScreens(appId) {
   const url = `https://ujasntkfphywizsdaapi.supabase.co/rest/v1/app_screens?id=eq.${appId}`;
