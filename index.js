@@ -93,14 +93,18 @@ app.get("/apps", async (req, res) => {
     const { data, error } = await supabase
       .from("apps_with_preview_screens")
       .select()
-      .eq("platform", "web")
-      .range(0, 999);
+      .limit(10000);
 
     if (error) {
       throw error;
     }
 
-    res.json(data);
+    // Extraire les noms des applications
+    const appNames = data.map((app) => app.appName).join("\n");
+
+    // Retourner les noms sous forme de texte brut avec des sauts de ligne
+    res.setHeader("Content-Type", "text/plain");
+    res.send(appNames);
   } catch (error) {
     console.error(error.message);
     res
